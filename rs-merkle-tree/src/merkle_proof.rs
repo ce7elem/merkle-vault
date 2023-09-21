@@ -27,10 +27,10 @@ impl MerkleProof {
         for i in 1..self.nodes.len() {
             if self.nodes[i].direction == Direction::Right {
                 merkle_root_from_proof =
-                    hash([merkle_root_from_proof, self.nodes[i].hash.clone()].concat());
+                    hash(&[merkle_root_from_proof, self.nodes[i].hash.clone()].concat());
             } else {
                 merkle_root_from_proof =
-                    hash([self.nodes[i].hash.clone(), merkle_root_from_proof].concat());
+                    hash(&[self.nodes[i].hash.clone(), merkle_root_from_proof].concat());
             }
         }
         return Ok(merkle_root_from_proof);
@@ -52,7 +52,7 @@ mod tests {
         let leaf_values = ["a", "b", "c", "d", "e", "f"];
         let leaf_hashes: Vec<Hash> = leaf_values
             .iter()
-            .map(|x| hash(x.as_bytes().to_vec()))
+            .map(|x| hash(&x.as_bytes().to_vec()))
             .collect();
 
         let tree = MerkleTree::from_leaves(leaf_hashes.clone());

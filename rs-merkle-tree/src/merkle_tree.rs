@@ -49,12 +49,12 @@ impl MerkleTree {
                 let left = hashes[i].clone();
                 let right = hashes[i + 1].clone();
 
-                layer.push(hash([left, right].concat()));
+                layer.push(hash(&[left, right].concat()));
             }
 
             if last_even_index != hashes.len() {
                 let last = hashes.last().unwrap();
-                layer.push(hash([last.clone(), last.clone()].concat()));
+                layer.push(hash(&[last.clone(), last.clone()].concat()));
             }
 
             tree.hashes.append(&mut layer.clone());
@@ -124,7 +124,7 @@ mod tests {
         let leaf_values = ["a", "b", "c", "d", "e", "f"];
         let leaf_hashes: Vec<Hash> = leaf_values
             .iter()
-            .map(|x| hash(x.as_bytes().to_vec()))
+            .map(|x| hash(&x.as_bytes().to_vec()))
             .collect();
 
         let tree = MerkleTree::from_leaves(leaf_hashes);
@@ -137,7 +137,7 @@ mod tests {
         let leaf_values = ["a", "b", "c", "d", "e", "f"];
         let leaf_hashes: Vec<Hash> = leaf_values
             .iter()
-            .map(|x| hash(x.as_bytes().to_vec()))
+            .map(|x| hash(&x.as_bytes().to_vec()))
             .collect();
 
         let tree = MerkleTree::from_leaves(leaf_hashes.clone());
