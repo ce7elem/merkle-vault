@@ -1,6 +1,6 @@
-use std::error::Error;
 use crate::merkle_tree::{Direction, MerkleNode};
 use crate::utils::crypto::hash;
+use std::error::Error;
 pub type Hash = Vec<u8>;
 
 #[derive(Debug)]

@@ -58,7 +58,8 @@ impl MerkleTree {
             }
 
             tree.hashes.append(&mut layer.clone());
-            tree.levels_indices.push(hashes.len() + tree.levels_indices.last().unwrap());
+            tree.levels_indices
+                .push(hashes.len() + tree.levels_indices.last().unwrap());
             return generate_next_layer(layer, tree);
         }
 
