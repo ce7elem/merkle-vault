@@ -9,9 +9,9 @@ use rs_merkle_tree::MerkleTree;
 use serde::Deserialize;
 use std::fmt::Write;
 use std::fs;
-use std::process::exit;
 use std::fs::OpenOptions;
 use std::io::Write as ioWrite;
+use std::process::exit;
 
 #[derive(Deserialize)]
 struct Response {
@@ -147,7 +147,7 @@ fn create_collection(conf: &CliConf) -> String {
                     eprintln!("Error while saving vault_id: {e}");
                 }
                 return vault_id;
-            },
+            }
             None => {
                 error!("Something went wrong: {}", res.message);
                 exit(-1);

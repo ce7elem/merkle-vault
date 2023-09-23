@@ -1,7 +1,7 @@
 use crate::config;
 use crate::utils::fs::lines_from_file;
 use crate::CliConf;
-use log::{error};
+use log::error;
 use serde::Deserialize;
 use std::process::exit;
 

@@ -5,7 +5,7 @@ use log::info;
 mod cmd;
 mod config;
 mod utils;
-use cmd::{add, commit, status, list};
+use cmd::{add, commit, list, status};
 
 use indicatif_log_bridge::LogWrapper;
 
