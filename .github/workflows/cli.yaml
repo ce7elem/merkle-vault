@@ -1,4 +1,4 @@
-name: vault-cli
+name: CLI
 
 on: [push]
 

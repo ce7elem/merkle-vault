@@ -1,4 +1,4 @@
-name: vault-api
+name: API
 
 on: [push]
 
