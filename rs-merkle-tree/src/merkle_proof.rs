@@ -1,7 +1,6 @@
 use crate::merkle_tree::{Direction, MerkleNode};
-use crate::utils::crypto::hash;
+use crate::utils::crypto::{hash, Hash};
 use std::error::Error;
-pub type Hash = Vec<u8>;
 
 #[derive(Debug)]
 pub struct MerkleProof {

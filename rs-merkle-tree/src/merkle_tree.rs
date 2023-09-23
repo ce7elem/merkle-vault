@@ -1,8 +1,7 @@
 use crate::merkle_proof::MerkleProof;
-use crate::utils::crypto::hash;
+use crate::utils::crypto::{hash, Hash};
 use hex;
 use std::error::Error;
-pub type Hash = Vec<u8>;
 
 #[derive(Debug, PartialEq)]
 pub enum Direction {
