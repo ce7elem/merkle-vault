@@ -1,7 +1,7 @@
-pub use status::status;
 pub use add::add;
 pub use commit::commit;
+pub use status::status;
 
-mod status;
 mod add;
 mod commit;
+mod status;
