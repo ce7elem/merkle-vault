@@ -1,6 +1,7 @@
 use crate::merkle_proof::MerkleProof;
 use crate::utils::crypto::hash;
 use std::error::Error;
+use hex;
 pub type Hash = Vec<u8>;
 
 #[derive(Debug, PartialEq)]
@@ -113,6 +114,13 @@ impl MerkleTree {
 
     pub fn root(&self) -> Option<&Hash> {
         return self.hashes.last();
+    }
+
+    pub fn root_hex(&self) -> Option<String> {
+        match self.root() {
+            Some(r) => Some(hex::encode(r)),
+            None => None,
+        }
     }
 }
 
