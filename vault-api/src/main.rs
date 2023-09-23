@@ -106,6 +106,28 @@ fn finalize_vault(fsid: String) -> Value {
     })
 }
 
+#[get("/<fsid>/list-files")]
+fn list_vault_files(fsid: String) -> Value {
+    let vault_dir = format!("./FILES/{fsid}");
+    if !Path::new(&vault_dir).is_dir() {
+        return json!({
+            "success": false,
+            "message": "FS does not exists",
+        });
+    }
+    let files = fs::read_dir(vault_dir)
+        .unwrap()
+        .filter(|f| f.as_ref().unwrap().path().is_file())
+        .map(|res| res.map(|e| e.path()))
+        .collect::<Result<Vec<_>, io::Error>>()
+        .unwrap();
+
+    json!({
+        "success": true,
+        "files": files,
+    })
+}
+
 #[delete("/<fsid>")]
 fn delete_vault(fsid: String) -> Value {
     let vault_dir = format!("./FILES/{fsid}");
@@ -133,6 +155,7 @@ fn rocket() -> _ {
             create_vault,
             upload_file,
             finalize_vault,
+            list_vault_files,
             delete_vault
         ],
     )

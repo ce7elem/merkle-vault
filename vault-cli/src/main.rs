@@ -5,7 +5,7 @@ use log::info;
 mod cmd;
 mod config;
 mod utils;
-use cmd::{add, commit, status};
+use cmd::{add, commit, status, list};
 
 use indicatif_log_bridge::LogWrapper;
 
@@ -50,7 +50,7 @@ fn main() {
             .build();
     let conf = CliConf {
         term_ctx: MultiProgress::new(),
-        api_endpoint: "http:localhost:8000/".into(),
+        api_endpoint: "http:localhost:8000".into(),
     };
     LogWrapper::new(conf.term_ctx.clone(), logger)
         .try_init()
@@ -62,13 +62,10 @@ fn main() {
         Commands::Status {} => status(),
         Commands::Add { path } => add(path),
         Commands::Commit {} => commit(&conf),
+        Commands::List {} => list(&conf),
 
         Commands::Download { file } => {
             info!("Downloading {file:?}");
-        }
-
-        Commands::List {} => {
-            info!("Listing files");
         }
     }
 }
