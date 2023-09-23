@@ -1,4 +1,5 @@
 use crate::config;
+use crate::utils::fs::lines_from_file;
 use crate::CliConf;
 use dialoguer::Confirm;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
@@ -9,11 +10,6 @@ use serde::Deserialize;
 use std::fmt::Write;
 use std::fs;
 use std::process::exit;
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-    path::Path,
-};
 
 #[derive(Deserialize)]
 struct Response {
@@ -181,8 +177,4 @@ fn abort_gracefully(collection: &String, conf: &CliConf) {
         .delete(format!("{}/{collection}", conf.api_endpoint))
         .send();
     exit(-1);
-}
-
-fn lines_from_file(filename: impl AsRef<Path>) -> io::Result<Vec<String>> {
-    BufReader::new(File::open(filename)?).lines().collect()
 }

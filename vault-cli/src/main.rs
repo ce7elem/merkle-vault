@@ -4,7 +4,8 @@ use log::info;
 
 mod cmd;
 mod config;
-use cmd::{add, commit};
+mod utils;
+use cmd::{status, add, commit};
 
 use indicatif_log_bridge::LogWrapper;
 
@@ -19,6 +20,9 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
+    /// List staged files to be commited to the Vault
+    Status {},
+
     /// Add file to the current Vault collection
     Add { path: String },
 
@@ -55,6 +59,7 @@ fn main() {
     let args = Cli::parse();
 
     match args.command {
+        Commands::Status {} => status(),
         Commands::Add { path } => add(path),
         Commands::Commit {} => commit(&conf),
 
