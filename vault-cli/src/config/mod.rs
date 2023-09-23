@@ -19,3 +19,13 @@ pub fn staging_file() -> PathBuf {
     }
     return path;
 }
+
+/// Returns path to the vaults list config files.
+/// Will create the file if doesn't exists.
+pub fn vaults_file() -> PathBuf {
+    let path = config_base().join("vaults");
+    if !(Path::new(&path).is_file()) {
+        fs::File::create(&path).unwrap();
+    }
+    return path;
+}
