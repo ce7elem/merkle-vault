@@ -1,4 +1,4 @@
-name: CI
+name: vault-api
 
 on: [push]
 
@@ -7,7 +7,7 @@ env:
 
 jobs:
   lint:
-    name: "[MRK-LIB] Lint and Format sources"
+    name: "Lint and Format sources"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,14 +17,14 @@ jobs:
       - uses: actions/checkout@v3
       - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
       - run: cargo check
-        working-directory: rs-merkle-tree/
+        working-directory: vault-api/
       - run: cargo verify-project
-        working-directory: rs-merkle-tree/
+        working-directory: vault-api/
       - run: cargo fmt --check
-        working-directory: rs-merkle-tree/
+        working-directory: vault-api/
 
   build:
-    name: "[MRK-LIB] Build project"
+    name: "Build project"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,17 +34,4 @@ jobs:
       - uses: actions/checkout@v3
       - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
       - run: cargo build --verbose
-        working-directory: rs-merkle-tree/
-
-  unittests:
-    name: "[MRK-LIB] Run Unittests"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        toolchain:
-          - stable
-    steps:
-      - uses: actions/checkout@v3
-      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-      - run: cargo test --verbose
-        working-directory: rs-merkle-tree/
+        working-directory: vault-api/
