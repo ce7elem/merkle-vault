@@ -1,7 +1,7 @@
 use crate::merkle_proof::MerkleProof;
 use crate::utils::crypto::hash;
-use std::error::Error;
 use hex;
+use std::error::Error;
 pub type Hash = Vec<u8>;
 
 #[derive(Debug, PartialEq)]
