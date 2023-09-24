@@ -5,6 +5,7 @@ use log::info;
 use std::path::Path;
 use std::process::exit;
 
+    /// Download file from any Vault
 pub fn download(filename: &String, conf: &CliConf) {
     let files_uri = retrieve_remote_matching_files(filename, conf);
 

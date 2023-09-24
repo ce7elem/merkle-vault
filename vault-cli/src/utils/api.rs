@@ -4,6 +4,7 @@ use rs_merkle_tree::MerkleProof;
 use serde::Deserialize;
 use std::error::Error;
 use std::process::exit;
+use std::io::Cursor;
 
 #[derive(Deserialize)]
 #[allow(dead_code)]
@@ -13,6 +14,16 @@ struct ListFilesResponse {
     files: Option<Vec<String>>,
 }
 
+/// Fetches a list of files stored in a vault.
+///
+/// # Arguments
+///
+/// * `vault_id` - The ID of the vault to fetch files from.
+/// * `conf` - The CLI configuration containing the HTTP client and API endpoint.
+///
+/// # Returns
+///
+/// A vector of strings representing the list of files in the vault.
 pub fn fetch_files_in_vault(vault_id: &String, conf: &CliConf) -> Vec<String> {
     let res = conf
         .http
@@ -34,7 +45,17 @@ pub fn fetch_files_in_vault(vault_id: &String, conf: &CliConf) -> Vec<String> {
     exit(-1);
 }
 
-use std::io::Cursor;
+/// Downloads a file from a vault and saves it locally.
+///
+/// # Arguments
+///
+/// * `vault_id` - The ID of the vault where the file is stored.
+/// * `filename` - The name of the file to download.
+/// * `conf` - The CLI configuration containing the HTTP client and API endpoint.
+///
+/// # Returns
+///
+/// A `Result` indicating success or an error if there's an issue downloading or saving the file.
 pub fn download_file(
     vault_id: &String,
     filename: &String,
@@ -59,6 +80,18 @@ struct ProofResponse {
     proof: Option<MerkleProof>,
 }
 
+/// Fetches a Merkle proof for a specific file in a vault.
+///
+/// # Arguments
+///
+/// * `vault_id` - The ID of the vault where the file is stored.
+/// * `filename` - The name of the file for which to fetch the Merkle proof.
+/// * `conf` - The CLI configuration containing the HTTP client and API endpoint.
+///
+/// # Returns
+///
+/// A `Result` containing the Merkle proof if successful, or an error if there's an issue
+/// fetching or parsing the proof.
 pub fn fetch_proof_for_file(
     vault_id: &String,
     filename: &String,

@@ -2,6 +2,7 @@ use crate::utils::api::fetch_files_in_vault;
 use crate::vault::get_all_vaults;
 use crate::CliConf;
 
+/// List all files from all Vaults
 pub fn list(conf: &CliConf) {
     for vault_id in get_all_vaults() {
         println!("Files in vault {vault_id}:");

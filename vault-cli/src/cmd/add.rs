@@ -5,6 +5,7 @@ use std::io::Write;
 use std::path::Path;
 use std::process::exit;
 
+/// Add file to the current Vault collection
 pub fn add(path: String) {
     info!("Staging {path}");
     let files: Vec<String> = if Path::new(&path).is_dir() {
