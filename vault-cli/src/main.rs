@@ -6,7 +6,7 @@ mod cmd;
 mod config;
 mod utils;
 mod vault;
-use cmd::{add, remove, commit, download, list, status};
+use cmd::{add, remove, clear, commit, download, list, status};
 
 use indicatif_log_bridge::LogWrapper;
 
@@ -29,6 +29,9 @@ enum Commands {
 
     /// Remove file from the current Vault
     Remove { path: String },
+
+    /// Remove all file from the staging zone
+    Clear {},
 
     /// Commit the vault: Upload all staged files to the server and Delete them
     Commit {},
@@ -60,6 +63,7 @@ fn main() {
         Commands::Status {} => status(),
         Commands::Add { path } => add(path),
         Commands::Remove { path } => remove(path),
+        Commands::Clear {} => clear(),
         Commands::Commit {} => commit(&conf),
         Commands::List {} => list(&conf),
         Commands::Download { file } => download(&file, &conf),
