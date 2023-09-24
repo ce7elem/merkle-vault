@@ -85,6 +85,8 @@ fn finalize_vault(vault_id: String) -> Value {
         });
     }
 
+    println!("Finalizing {vault_id}");
+
     let files_hashes: Vec<Vec<u8>> = helpers::fs::list_files_in_vault(&vault_id)
         .into_iter()
         .map(|f| {
@@ -114,7 +116,15 @@ fn list_vault_files(vault_id: String) -> Value {
 
     json!({
         "success": true,
-        "files": helpers::fs::list_files_in_vault(&vault_id),
+        "files": helpers::fs::list_files_in_vault(&vault_id)
+            .iter().map(|f| {
+                    Path::new(f)
+                        .file_name()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_string()
+                }).collect::<Vec<String>>()
     })
 }
 

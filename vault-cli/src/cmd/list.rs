@@ -1,5 +1,5 @@
 use crate::utils::api::fetch_files_in_vault;
-use crate::utils::fs::get_all_vaults;
+use crate::vault::get_all_vaults;
 use crate::CliConf;
 
 pub fn list(conf: &CliConf) {

@@ -1,10 +1,12 @@
-use crate::config;
+use crate::config::Config;
+use log::info;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 use std::process::exit;
 
 pub fn add(path: String) {
+    info!("Staging {path}");
     let files: Vec<String> = if Path::new(&path).is_dir() {
         fs::read_dir(path)
             .unwrap()
@@ -24,7 +26,7 @@ pub fn add(path: String) {
 
     let mut file = OpenOptions::new()
         .append(true)
-        .open(config::staging_file())
+        .open(Config::staging_file())
         .unwrap();
 
     if let Err(e) = writeln!(file, "{}", files.join("\n")) {
