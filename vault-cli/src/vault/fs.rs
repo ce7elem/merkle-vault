@@ -48,3 +48,12 @@ pub fn save_vault_root_hash(vault_id: &String, hash: &String) -> io::Result<()> 
     file.write_all(hash.as_bytes())?;
     Ok(())
 }
+
+/// Returns a list of the staged files.
+///
+/// # Returns
+///
+/// A `Vec<String>` containing the names of staged files.
+pub fn get_staged_files() -> Vec<String> {
+    lines_from_file(Config::staging_file()).unwrap()
+}
