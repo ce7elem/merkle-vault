@@ -25,7 +25,6 @@ pub struct MerkleTree {
 }
 
 impl MerkleTree {
-
     /// Creates a new Merkle tree from a list of leaf hashes.
     pub fn from_leaves(leaves: Vec<Hash>) -> Self {
         if leaves.is_empty() {
