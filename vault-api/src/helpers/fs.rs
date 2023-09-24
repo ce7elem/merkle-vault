@@ -1,5 +1,4 @@
-use std::{
-    fs, io, path::Path, error::Error };
+use std::{error::Error, fs, io, path::Path};
 
 pub fn list_files_in_vault(vault_id: &String) -> Vec<String> {
     let vault_dir = format!("./FILES/{vault_id}");

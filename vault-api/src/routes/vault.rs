@@ -1,12 +1,9 @@
+use rocket::serde::json::{json, Value};
 use rs_merkle_tree::{utils::crypto::hash, MerkleTree};
 use std::{fs, io, path::Path};
 use uuid::Uuid;
-use rocket::serde::json::{json, Value};
 
-use crate::helpers::fs::{
-    get_existing_vault_dir,
-    list_files_in_vault,
-};
+use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
 
 #[post("/new-vault")]
 pub fn create_vault() -> Value {

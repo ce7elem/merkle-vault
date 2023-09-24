@@ -5,13 +5,8 @@ use rocket::serde::json::{json, Value};
 mod helpers;
 mod routes;
 use routes::{
-    create_vault,
+    create_vault, delete_vault, download_file, download_proof, finalize_vault, list_vault_files,
     upload_file,
-    finalize_vault,
-    list_vault_files,
-    delete_vault,
-    download_file,
-    download_proof,
 };
 
 #[get("/")]
