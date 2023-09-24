@@ -1,5 +1,6 @@
-use crate::config;
+use crate::config::Config;
 use crate::utils::fs::lines_from_file;
+use crate::vault::save_vault_root_hash;
 use crate::CliConf;
 use dialoguer::Confirm;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
@@ -21,7 +22,7 @@ struct Response {
 }
 
 pub fn commit(conf: &CliConf) {
-    let files = lines_from_file(config::staging_file()).unwrap();
+    let files = lines_from_file(Config::staging_file()).unwrap();
     if files.is_empty() {
         println!("Nothing to commit. Add files to staging with the `add` command.");
         exit(0);
@@ -36,20 +37,23 @@ pub fn commit(conf: &CliConf) {
         return;
     }
 
-    let collection = create_collection(conf);
-    upload_files(&files, &collection, conf);
-    let remote_root = finalize_upload(&collection, conf);
+    let new_vault_id = create_new_vault(conf);
+    upload_files(&files, &new_vault_id, conf);
+    let remote_root_hash = finalize_upload(&new_vault_id, conf);
 
-    let local_root = compute_local_root(&files, conf);
+    let local_root_hash = compute_local_root(&files, conf);
 
-    info!("Local root hash:  {local_root}");
-    info!("Remote root hash: {remote_root}");
-    if remote_root != local_root {
+    info!("Local root hash:  {local_root_hash}");
+    info!("Remote root hash: {remote_root_hash}");
+    if remote_root_hash != local_root_hash {
         error!("Remote FS seems corrupted.");
-        abort_gracefully(&collection, conf);
+        abort_gracefully(&new_vault_id, conf);
     }
 
-    let _ = fs::write(".vault", local_root);
+    if let Err(err) = save_vault_root_hash(&new_vault_id, &local_root_hash) {
+        error!("Failed to save new Vault's new root hash: {err}");
+        abort_gracefully(&new_vault_id, conf);
+    }
 }
 
 fn compute_local_root(files: &Vec<String>, conf: &CliConf) -> String {
@@ -122,7 +126,7 @@ fn upload_files(files: &Vec<String>, collection: &String, conf: &CliConf) {
     pb.finish_with_message("all files uploaded");
 }
 
-fn create_collection(conf: &CliConf) -> String {
+fn create_new_vault(conf: &CliConf) -> String {
     #[derive(Deserialize, Debug)]
     #[allow(dead_code)]
     struct NewVaultResponse {
@@ -140,7 +144,7 @@ fn create_collection(conf: &CliConf) -> String {
             Some(vault_id) => {
                 let mut vaults_file = OpenOptions::new()
                     .append(true)
-                    .open(config::vaults_file())
+                    .open(Config::vaults_file())
                     .unwrap();
 
                 if let Err(e) = writeln!(vaults_file, "{}", vault_id) {
@@ -168,13 +172,13 @@ fn finalize_upload(collection: &String, conf: &CliConf) -> String {
             if let Some(root_hash) = res.tree_root {
                 return root_hash;
             } else {
-                error!("Upload failed: {}", res.message);
+                error!("Finalization failed: {}", res.message);
                 abort_gracefully(collection, conf);
                 unreachable!()
             }
         }
         Err(err) => {
-            error!("Upload error: {err:?}");
+            error!("Finalization error: {err:?}");
             abort_gracefully(collection, conf);
             unreachable!()
         }
@@ -183,7 +187,7 @@ fn finalize_upload(collection: &String, conf: &CliConf) -> String {
 
 fn abort_gracefully(collection: &String, conf: &CliConf) {
     let client = reqwest::blocking::Client::new();
-    error!("Exitting gracefully...");
+    error!("Exiting gracefully...");
     error!("Resetting remote FS.");
     let _ = client
         .delete(format!("{}/{collection}", conf.api_endpoint))

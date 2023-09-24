@@ -1,6 +1,5 @@
-use crate::utils::api::download_file;
-use crate::utils::api::fetch_files_in_vault;
-use crate::utils::fs::get_all_vaults;
+use crate::utils::api::{download_file, fetch_files_in_vault, fetch_proof_for_file};
+use crate::vault::{get_all_vaults, get_root_hash_for_vault};
 use crate::CliConf;
 use log::info;
 use std::path::Path;
@@ -28,18 +27,18 @@ pub fn download(filename: &String, conf: &CliConf) {
         exit(-1);
     }
 
-    // let proof = get_proof_for_file(&vault_id, &filename, conf) {
-    //     Ok(proof) => proof,
-    //     Err(err) => {
-    //         eprintln!("Something went wrong while fetching proof: {err}");
-    //         exit(-1);
-    //     }
-    // }
-    // let local_root_hash = get_root_hash_for_vault(&vault_id).unwrap();
-    // if proof.compute_root() != local_root_hash {
-    //     eprintln!("ERROR: File alteration detected.")
-    //     exit(-1);
-    // }
+    let proof = match fetch_proof_for_file(&vault_id, &filename, conf) {
+        Ok(proof) => proof,
+        Err(err) => {
+            eprintln!("Something went wrong while fetching proof: {err}");
+            exit(-1);
+        }
+    };
+    let local_root_hash = get_root_hash_for_vault(&vault_id).unwrap();
+    if proof.compute_root_hex().unwrap() != local_root_hash {
+        eprintln!("ERROR: File alteration detected.");
+        exit(-1);
+    }
 
     info!("'{filename}' downloaded successfully.");
 }

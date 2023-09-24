@@ -1,9 +1,11 @@
 use clap::{Parser, Subcommand};
 use indicatif::MultiProgress;
+use vault_cli::CliConf;
 
 mod cmd;
 mod config;
 mod utils;
+mod vault;
 use cmd::{add, commit, download, list, status};
 
 use indicatif_log_bridge::LogWrapper;
@@ -38,17 +40,12 @@ enum Commands {
     Download { file: String },
 }
 
-pub struct CliConf {
-    term_ctx: MultiProgress,
-    api_endpoint: String,
-    http: reqwest::blocking::Client,
-}
 fn main() {
     let logger =
         env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn"))
             .format_timestamp(None)
             .build();
-    let conf = CliConf {
+    let conf = crate::CliConf {
         term_ctx: MultiProgress::new(),
         api_endpoint: "http:localhost:8000".into(),
         http: reqwest::blocking::Client::new(),

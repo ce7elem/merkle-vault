@@ -1,20 +1,16 @@
 use crate::merkle_tree::{Direction, MerkleNode};
 use crate::utils::crypto::{hash, Hash};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct MerkleProof {
     pub nodes: Vec<MerkleNode>,
-    tree_root: Hash,
 }
 
 impl MerkleProof {
-    pub fn new(hashes: Vec<MerkleNode>, expected_root: Hash) -> Self {
-        Self {
-            nodes: hashes,
-            tree_root: expected_root,
-        }
+    pub fn new(hashes: Vec<MerkleNode>) -> Self {
+        Self { nodes: hashes }
     }
 
     pub fn compute_root(&self) -> Result<Hash, Box<dyn Error>> {
@@ -36,8 +32,8 @@ impl MerkleProof {
         return Ok(merkle_root_from_proof);
     }
 
-    pub fn verify(&self) -> bool {
-        self.compute_root().unwrap() == self.tree_root
+    pub fn compute_root_hex(&self) -> Result<String, Box<dyn Error>> {
+        Ok(hex::encode(self.compute_root()?))
     }
 }
 
@@ -58,6 +54,5 @@ mod tests {
         let proof = tree.proof(leaf_hashes[0].clone()).unwrap();
 
         assert_eq!(proof.compute_root().unwrap(), *tree.root().unwrap());
-        assert!(proof.verify());
     }
 }

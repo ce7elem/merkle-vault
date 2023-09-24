@@ -1,15 +1,15 @@
 use crate::merkle_proof::MerkleProof;
 use crate::utils::crypto::{hash, Hash};
 use hex;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Serialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub enum Direction {
     Left,
     Right,
 }
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct MerkleNode {
     pub hash: Hash,
     pub direction: Direction,
@@ -106,10 +106,7 @@ impl MerkleTree {
             proof_elements.push(sibling_node);
             hash_index = hash_index / 2;
         }
-        Ok(MerkleProof::new(
-            proof_elements,
-            self.root().unwrap().clone(),
-        ))
+        Ok(MerkleProof::new(proof_elements))
     }
 
     pub fn root(&self) -> Option<&Hash> {
