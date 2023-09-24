@@ -1,6 +1,6 @@
 use rocket::serde::json::{json, Value};
-use rs_merkle_tree::{utils::crypto::hash, MerkleTree};
-use std::{fs, io, path::Path};
+
+use std::{fs, path::Path};
 use uuid::Uuid;
 
 use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
