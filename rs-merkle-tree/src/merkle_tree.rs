@@ -4,23 +4,29 @@ use hex;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
+/// Represents the direction of a node in the Merkle tree.
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub enum Direction {
     Left,
     Right,
 }
+
+/// Represents a node in the Merkle tree.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MerkleNode {
     pub hash: Hash,
     pub direction: Direction,
 }
 
+/// Represents a Merkle tree.
 pub struct MerkleTree {
     pub hashes: Vec<Hash>,
     levels_indices: Vec<usize>,
 }
 
 impl MerkleTree {
+
+    /// Creates a new Merkle tree from a list of leaf hashes.
     pub fn from_leaves(leaves: Vec<Hash>) -> Self {
         if leaves.is_empty() {
             return Self {
@@ -69,6 +75,7 @@ impl MerkleTree {
         return tree;
     }
 
+    /// Returns the direction (Left or Right) of a node at the given index.
     fn get_node_direction(&self, index: usize) -> Direction {
         if index % 2 == 0 {
             Direction::Right
@@ -77,10 +84,13 @@ impl MerkleTree {
         }
     }
 
+    /// Returns the index of a hash in the list of hashes.
     fn get_hash_index(&self, hash: &Hash) -> Option<usize> {
         self.hashes.iter().position(|h| h == hash)
     }
 
+    /// Generates a Merkle proof for a given hash.
+    // TODO: Move it to MerkleProof
     pub fn proof(&self, hash: Hash) -> Result<MerkleProof, Box<dyn Error>> {
         if self.hashes.is_empty() {
             return Err("Tree is empty".into());
@@ -109,10 +119,12 @@ impl MerkleTree {
         Ok(MerkleProof::new(proof_elements))
     }
 
+    /// Returns the root hash of the Merkle tree.
     pub fn root(&self) -> Option<&Hash> {
         return self.hashes.last();
     }
 
+    /// Returns the hexadecimal representation of the root hash of the Merkle tree.
     pub fn root_hex(&self) -> Option<String> {
         match self.root() {
             Some(r) => Some(hex::encode(r)),
