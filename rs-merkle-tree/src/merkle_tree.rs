@@ -1,14 +1,15 @@
 use crate::merkle_proof::MerkleProof;
 use crate::utils::crypto::{hash, Hash};
 use hex;
+use serde::Serialize;
 use std::error::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Serialize, PartialEq, Debug)]
 pub enum Direction {
     Left,
     Right,
 }
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct MerkleNode {
     pub hash: Hash,
     pub direction: Direction,

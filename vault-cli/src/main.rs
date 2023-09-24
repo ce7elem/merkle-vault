@@ -1,11 +1,10 @@
 use clap::{Parser, Subcommand};
 use indicatif::MultiProgress;
-use log::info;
 
 mod cmd;
 mod config;
 mod utils;
-use cmd::{add, commit, list, status};
+use cmd::{add, commit, download, list, status};
 
 use indicatif_log_bridge::LogWrapper;
 
@@ -32,16 +31,17 @@ enum Commands {
     /// Commit the vault: Upload all staged files to the server and Delete them
     Commit {},
 
-    /// Download file from any Vault
-    Download { file: Option<String> },
-
     /// List all files from all Vaults
     List {},
+
+    /// Download file from any Vault
+    Download { file: String },
 }
 
 pub struct CliConf {
     term_ctx: MultiProgress,
     api_endpoint: String,
+    http: reqwest::blocking::Client,
 }
 fn main() {
     let logger =
@@ -51,6 +51,7 @@ fn main() {
     let conf = CliConf {
         term_ctx: MultiProgress::new(),
         api_endpoint: "http:localhost:8000".into(),
+        http: reqwest::blocking::Client::new(),
     };
     LogWrapper::new(conf.term_ctx.clone(), logger)
         .try_init()
@@ -63,9 +64,6 @@ fn main() {
         Commands::Add { path } => add(path),
         Commands::Commit {} => commit(&conf),
         Commands::List {} => list(&conf),
-
-        Commands::Download { file } => {
-            info!("Downloading {file:?}");
-        }
+        Commands::Download { file } => download(&file, &conf),
     }
 }

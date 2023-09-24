@@ -1,8 +1,9 @@
 use crate::merkle_tree::{Direction, MerkleNode};
 use crate::utils::crypto::{hash, Hash};
+use serde::Serialize;
 use std::error::Error;
 
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct MerkleProof {
     pub nodes: Vec<MerkleNode>,
     tree_root: Hash,
@@ -44,7 +45,6 @@ impl MerkleProof {
 mod tests {
     use super::*;
     use crate::merkle_tree::MerkleTree;
-    use hex;
 
     #[test]
     fn should_generate_proof() {
