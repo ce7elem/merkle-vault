@@ -5,7 +5,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 
-/// Remove file from the staging zone
+/// Remove file from the staging area
 pub fn remove(path: String) {
     info!("Unstaging {path}");
 

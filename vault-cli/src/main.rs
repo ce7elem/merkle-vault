@@ -21,25 +21,25 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
-    /// List staged files to be commited to the Vault
+    /// List staged files to be commited to the vault
     Status {},
 
-    /// Add file to the current Vault collection
+    /// Add file to the staging area
     Add { path: String },
 
-    /// Remove file from the current Vault
+    /// Remove file from the staging area
     Remove { path: String },
 
-    /// Remove all file from the staging zone
+    /// Remove all file from the staging area
     Clear {},
 
-    /// Commit the vault: Upload all staged files to the server and Delete them
+    /// Commit staged files: upload all staged files to a new vault and delete them
     Commit {},
 
-    /// List all files from all Vaults
+    /// List all files from all vaults
     List {},
 
-    /// Download file from any Vault
+    /// Download file from any vault
     Download { file: String },
 }
 

@@ -21,7 +21,7 @@ struct Response {
     tree_root: Option<String>,
 }
 
-/// Commit the vault: Upload all staged files to the server and Delete them
+/// Commit the vault: Upload all staged files to the server and delete them
 pub fn commit(conf: &CliConf) {
     let files = get_staged_files();
     if files.is_empty() {

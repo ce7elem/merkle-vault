@@ -5,7 +5,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 
-/// Add file or directory content to the current Vault collection
+/// Add file or directory content to the staging area
 pub fn add(path: String) {
     info!("Staging {path}");
 
