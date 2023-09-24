@@ -5,9 +5,9 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 
-/// Add file or directory content to the staging area
-pub fn add(path: String) {
-    info!("Staging {path}");
+/// Remove file from the staging area
+pub fn remove(path: String) {
+    info!("Unstaging {path}");
 
     let files: Vec<String> = if Path::new(&path).is_dir() {
         fs::read_dir(path)
@@ -23,28 +23,23 @@ pub fn add(path: String) {
     } else if Path::new(&path).is_file() {
         vec![fs::canonicalize(path).unwrap().display().to_string()]
     } else {
-        eprintln!("`{path}` is neither a file nor a directory. Aborting.");
-        return;
+        return; // Noting to do
     };
 
-    // remove already staged files from the selection
+    // remove selected files from the staging
     let staged = get_staged_files();
-    let files_to_add: Vec<String> = files
+    let new_staging: Vec<String> = staged
         .clone()
         .into_iter()
-        .filter(|f| !staged.contains(f))
+        .filter(|f| !files.contains(f))
         .collect();
-    if files_to_add.is_empty() {
-        println!("File(s) already staged. Nothing to do");
-        return;
-    }
 
-    // add files to the staging zone
     let mut staging_conf_file = OpenOptions::new()
-        .append(true)
+        .write(true)
+        .truncate(true)
         .open(Config::staging_file())
         .unwrap();
-    if let Err(e) = writeln!(staging_conf_file, "{}", files_to_add.join("\n")) {
+    if let Err(e) = writeln!(staging_conf_file, "{}", new_staging.join("\n")) {
         eprintln!("Couldn't write to staging file: {}", e);
     }
 }

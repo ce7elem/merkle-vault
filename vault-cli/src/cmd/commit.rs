@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::utils::fs::lines_from_file;
+use crate::vault::get_staged_files;
 use crate::vault::save_vault_root_hash;
 use crate::CliConf;
 use dialoguer::Confirm;
@@ -21,8 +21,9 @@ struct Response {
     tree_root: Option<String>,
 }
 
+/// Commit the vault: Upload all staged files to the server and delete them
 pub fn commit(conf: &CliConf) {
-    let files = lines_from_file(Config::staging_file()).unwrap();
+    let files = get_staged_files();
     if files.is_empty() {
         println!("Nothing to commit. Add files to staging with the `add` command.");
         exit(0);

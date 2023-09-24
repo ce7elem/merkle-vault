@@ -2,6 +2,7 @@ use crate::config::Config;
 use crate::utils::fs::lines_from_file;
 use std::process::exit;
 
+/// List staged files to be commited to the Vault
 pub fn status() {
     let files = lines_from_file(Config::staging_file()).unwrap();
     if files.is_empty() {
