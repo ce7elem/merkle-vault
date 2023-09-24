@@ -3,6 +3,7 @@ use crate::utils::crypto::{hash, Hash};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
+/// Represents a Merkle proof, which is a list of Merkle nodes.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MerkleProof {
     pub nodes: Vec<MerkleNode>,
@@ -13,6 +14,11 @@ impl MerkleProof {
         Self { nodes: hashes }
     }
 
+    /// Computes the Merkle root hash using the Merkle proof.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the Merkle proof is empty or if there's an issue computing the root hash.
     pub fn compute_root(&self) -> Result<Hash, Box<dyn Error>> {
         if self.nodes.is_empty() {
             return Err("missing proof".into());
@@ -32,6 +38,11 @@ impl MerkleProof {
         return Ok(merkle_root_from_proof);
     }
 
+    /// Computes the hexadecimal representation of the Merkle root hash using the Merkle proof.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if there's an issue computing the root hash or encoding it as hexadecimal.
     pub fn compute_root_hex(&self) -> Result<String, Box<dyn Error>> {
         Ok(hex::encode(self.compute_root()?))
     }
