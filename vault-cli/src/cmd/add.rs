@@ -1,9 +1,9 @@
 use crate::config::Config;
+use crate::vault::get_staged_files;
 use log::info;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
-use crate::vault::get_staged_files;
 
 /// Add file or directory content to the current Vault collection
 pub fn add(path: String) {
@@ -23,13 +23,17 @@ pub fn add(path: String) {
     } else if Path::new(&path).is_file() {
         vec![fs::canonicalize(path).unwrap().display().to_string()]
     } else {
-        eprintln!("{path} is neither a file nor a directory. Aborting.");
+        eprintln!("`{path}` is neither a file nor a directory. Aborting.");
         return;
     };
 
     // remove already staged files from the selection
     let staged = get_staged_files();
-    let files_to_add: Vec<String> = files.clone().into_iter().filter(|f| !staged.contains(f)).collect();
+    let files_to_add: Vec<String> = files
+        .clone()
+        .into_iter()
+        .filter(|f| !staged.contains(f))
+        .collect();
     if files_to_add.is_empty() {
         println!("File(s) already staged. Nothing to do");
         return;

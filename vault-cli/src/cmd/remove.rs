@@ -1,11 +1,11 @@
 use crate::config::Config;
+use crate::vault::get_staged_files;
 use log::info;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
-use crate::vault::get_staged_files;
 
-/// Add file to the current Vault collection
+/// Remove file from the staging zone
 pub fn remove(path: String) {
     info!("Unstaging {path}");
 

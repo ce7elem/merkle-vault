@@ -6,7 +6,7 @@ mod cmd;
 mod config;
 mod utils;
 mod vault;
-use cmd::{add, remove, clear, commit, download, list, status};
+use cmd::{add, clear, commit, download, list, remove, status};
 
 use indicatif_log_bridge::LogWrapper;
 

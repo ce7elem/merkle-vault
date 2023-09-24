@@ -3,8 +3,8 @@ use log::error;
 use rs_merkle_tree::MerkleProof;
 use serde::Deserialize;
 use std::error::Error;
-use std::process::exit;
 use std::io::Cursor;
+use std::process::exit;
 
 #[derive(Deserialize)]
 #[allow(dead_code)]
