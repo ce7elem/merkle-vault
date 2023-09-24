@@ -1,8 +1,8 @@
 use std::{error::Error, fs, io, path::Path};
 
 pub fn list_files_in_vault(vault_id: &String) -> Vec<String> {
-    let vault_dir = format!("./FILES/{vault_id}");
-    println!("Listing files in {vault_dir}");
+    let vault_dir = get_existing_vault_dir(vault_id).unwrap();
+
     fs::read_dir(vault_dir)
         .unwrap()
         .filter(|f| f.as_ref().unwrap().path().is_file())

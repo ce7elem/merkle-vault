@@ -1,11 +1,9 @@
+use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
 use rocket::form::Form;
-use rocket::fs::{TempFile};
+use rocket::fs::TempFile;
 use rocket::serde::json::{json, Value};
 use rs_merkle_tree::{utils::crypto::hash, MerkleTree};
 use std::{fs, path::Path};
-
-
-use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
 
 #[derive(FromForm)]
 pub struct Upload<'f> {
@@ -49,18 +47,6 @@ pub async fn upload_file(vault_id: String, mut form: Form<Upload<'_>>) -> Value 
 
 #[post("/<vault_id>/finalize")]
 pub fn finalize_vault(vault_id: String) -> Value {
-    let _vault_dir = match get_existing_vault_dir(&vault_id) {
-        Ok(dir) => dir,
-        Err(err) => {
-            return json!({
-                "success": false,
-                "message": err.to_string(),
-            })
-        }
-    };
-
-    println!("Finalizing {vault_id}");
-
     let files_hashes: Vec<Vec<u8>> = list_files_in_vault(&vault_id)
         .into_iter()
         .map(|f| {

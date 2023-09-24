@@ -1,9 +1,7 @@
+use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
 use rocket::serde::json::{json, Value};
-
 use std::{fs, path::Path};
 use uuid::Uuid;
-
-use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
 
 #[post("/new-vault")]
 pub fn create_vault() -> Value {
@@ -43,16 +41,6 @@ pub fn delete_vault(vault_id: String) -> Value {
 
 #[get("/<vault_id>/list-files")]
 pub fn list_vault_files(vault_id: String) -> Value {
-    let _vault_dir = match get_existing_vault_dir(&vault_id) {
-        Ok(dir) => dir,
-        Err(err) => {
-            return json!({
-                "success": false,
-                "message": err.to_string(),
-            })
-        }
-    };
-
     json!({
         "success": true,
         "files": list_files_in_vault(&vault_id)

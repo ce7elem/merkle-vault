@@ -1,10 +1,8 @@
-use rocket::fs::{NamedFile};
+use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
+use rocket::fs::NamedFile;
 use rocket::serde::json::{json, Value};
 use rs_merkle_tree::{utils::crypto::hash, MerkleTree};
 use std::{fs, io, path::Path};
-
-
-use crate::helpers::fs::get_existing_vault_dir;
 
 #[get("/<vault_id>/<file>")]
 pub async fn download_file(vault_id: String, file: String) -> Option<NamedFile> {
@@ -25,25 +23,10 @@ pub async fn download_proof(vault_id: String, file: String) -> Value {
         }
     };
 
-    // TODO: retrieve tree from dump
-    let vault_dir = match get_existing_vault_dir(&vault_id) {
-        Ok(dir) => dir,
-        Err(err) => {
-            return json!({
-                "success": false,
-                "message": err.to_string(),
-            })
-        }
-    };
-    let files = fs::read_dir(vault_dir)
-        .unwrap()
-        .filter(|f| f.as_ref().unwrap().path().is_file())
-        .map(|res| res.map(|e| e.path()))
-        .collect::<Result<Vec<_>, io::Error>>()
-        .unwrap();
+    // TODO: retrieve tree from dump instead of rebuilding it
 
-    let files_hashes: Vec<Vec<u8>> = files
-        .into_iter()
+    let files_hashes: Vec<Vec<u8>> = list_files_in_vault(&vault_id)
+        .iter()
         .map(|f| {
             let file = fs::read(f).unwrap();
             hash(&file)
