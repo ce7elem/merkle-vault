@@ -9,4 +9,5 @@ pub struct CliConf {
     pub term_ctx: MultiProgress,
     pub api_endpoint: String,
     pub http: reqwest::blocking::Client,
+    pub no_interaction: bool,
 }
