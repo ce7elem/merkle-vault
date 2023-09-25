@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use indicatif::MultiProgress;
-use vault_cli::CliConf;
 use std::path::PathBuf;
+use vault_cli::CliConf;
 
 mod cmd;
 mod config;
@@ -27,7 +27,7 @@ struct Cli {
     server: String,
 
     #[arg(short, long, action)]
-    no_interaction: bool 
+    no_interaction: bool,
 }
 
 #[derive(Debug, Subcommand)]
