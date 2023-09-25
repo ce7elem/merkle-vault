@@ -115,3 +115,10 @@ pub fn fetch_proof_for_file(
         }
     }
 }
+
+pub fn delete_vault(vault_id: &String, conf: &CliConf) {
+    let _ = conf
+        .http
+        .delete(format!("{}/{vault_id}", conf.api_endpoint))
+        .send();
+}

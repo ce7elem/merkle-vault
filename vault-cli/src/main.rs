@@ -7,7 +7,7 @@ mod cmd;
 mod config;
 mod utils;
 mod vault;
-use cmd::{add, clear, commit, download, list, remove, status};
+use cmd::{add, clear, commit, download, list, remove, status, delete};
 
 use indicatif_log_bridge::LogWrapper;
 
@@ -52,6 +52,9 @@ enum Commands {
 
     /// Download file from any vault
     Download { file: String },
+
+    /// Delete a given vault
+    Delete { vault_id: String },
 }
 
 fn main() {
@@ -80,5 +83,6 @@ fn main() {
         Commands::Commit {} => commit(&conf),
         Commands::List {} => list(&conf),
         Commands::Download { file } => download(&file, &conf),
+        Commands::Delete { vault_id } => delete(&vault_id, &conf),
     }
 }
