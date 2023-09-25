@@ -12,5 +12,4 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Start containers
-      working-directory: ./haas/test/add-host/
       run: docker-compose -f docker-compose.yaml up --remove-orphans --abort-on-container-exit --exit-code-from client
