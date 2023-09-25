@@ -1,6 +1,7 @@
 use crate::config::Config;
 use crate::utils::fs::lines_from_file;
 use std::error::Error;
+use std::fs::OpenOptions;
 use std::fs::{self, File};
 use std::io::{self, Write};
 
@@ -61,5 +62,33 @@ pub fn get_staged_files() -> Vec<String> {
 pub fn clear_staging() {
     if let Err(e) = fs::remove_file(Config::staging_file()) {
         eprintln!("Couldn't delete the config staging file: {}", e);
+    }
+}
+
+pub fn delete_vault_local(vault_id: &String) {
+    let vault_root_hash = Config::config_dir().join(format!("{vault_id}.hash"));
+    if let Err(e) = fs::remove_file(vault_root_hash) {
+        eprintln!("Couldn't delete vault root hash: {}", e);
+    }
+
+    // update vaults list
+    let vaults = lines_from_file(Config::vaults_file()).unwrap();
+    let new_vaults: Vec<String> = vaults
+        .clone()
+        .into_iter()
+        .filter(|v| v != vault_id)
+        .collect();
+
+    if new_vaults.is_empty() {
+        let _ = fs::remove_file(Config::vaults_file());
+    } else {
+        let mut vaults_conf_file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(Config::vaults_file())
+            .unwrap();
+        if let Err(e) = writeln!(vaults_conf_file, "{}", new_vaults.join("\n")) {
+            eprintln!("Couldn't write to staging file: {}", e);
+        }
     }
 }

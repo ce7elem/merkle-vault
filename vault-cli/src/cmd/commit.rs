@@ -1,6 +1,6 @@
 use crate::config::Config;
-use crate::vault::save_vault_root_hash;
-use crate::vault::{clear_staging, get_staged_files};
+use crate::utils::api::delete_vault;
+use crate::vault::{clear_staging, get_staged_files, save_vault_root_hash};
 use crate::CliConf;
 use dialoguer::Confirm;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
@@ -93,7 +93,6 @@ fn compute_local_root(files: &Vec<String>, conf: &CliConf) -> String {
 }
 
 fn upload_files(files: &Vec<String>, collection: &String, conf: &CliConf) {
-    let client = reqwest::blocking::Client::new();
     let pb = conf
         .term_ctx
         .add(ProgressBar::new(files.len().clone().try_into().unwrap()));
@@ -112,7 +111,8 @@ fn upload_files(files: &Vec<String>, collection: &String, conf: &CliConf) {
         let form = reqwest::blocking::multipart::Form::new()
             .file("file", f.clone())
             .unwrap();
-        let upload = client
+        let upload = conf
+            .http
             .post(format!("{}/{collection}/upload", conf.api_endpoint))
             .multipart(form)
             .send();
@@ -139,8 +139,8 @@ fn create_new_vault(conf: &CliConf) -> String {
         vault_id: Option<String>,
     }
 
-    let client = reqwest::blocking::Client::new();
-    let res = client
+    let res = conf
+        .http
         .post(format!("{}/new-vault", conf.api_endpoint))
         .send();
     if let Ok(res) = res.unwrap().json::<NewVaultResponse>() {
@@ -167,8 +167,8 @@ fn create_new_vault(conf: &CliConf) -> String {
 }
 
 fn finalize_upload(collection: &String, conf: &CliConf) -> String {
-    let client = reqwest::blocking::Client::new();
-    let remote_files = client
+    let remote_files = conf
+        .http
         .post(format!("{}/{collection}/finalize", conf.api_endpoint))
         .send();
     match remote_files.unwrap().json::<Response>() {
@@ -189,13 +189,10 @@ fn finalize_upload(collection: &String, conf: &CliConf) -> String {
     }
 }
 
-fn abort_gracefully(collection: &String, conf: &CliConf) {
-    let client = reqwest::blocking::Client::new();
+fn abort_gracefully(vault_id: &String, conf: &CliConf) {
     error!("Exiting gracefully...");
     error!("Resetting remote FS.");
-    let _ = client
-        .delete(format!("{}/{collection}", conf.api_endpoint))
-        .send();
+    delete_vault(vault_id, conf);
     exit(-1);
 }
 
