@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::vault::get_staged_files;
+use crate::vault::{get_staged_files, clear_staging};
 use crate::vault::save_vault_root_hash;
 use crate::CliConf;
 use dialoguer::Confirm;
@@ -57,6 +57,7 @@ pub fn commit(conf: &CliConf) {
     }
 
     remove_files(&files);
+    clear_staging();
 }
 
 fn compute_local_root(files: &Vec<String>, conf: &CliConf) -> String {
@@ -156,7 +157,7 @@ fn create_new_vault(conf: &CliConf) -> String {
                 return vault_id;
             }
             None => {
-                error!("Something went wrong: {}", res.message);
+                error!("Error on vault creation: {}", res.message);
                 exit(-1);
             }
         }

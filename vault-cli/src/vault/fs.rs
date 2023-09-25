@@ -57,3 +57,9 @@ pub fn save_vault_root_hash(vault_id: &String, hash: &String) -> io::Result<()> 
 pub fn get_staged_files() -> Vec<String> {
     lines_from_file(Config::staging_file()).unwrap()
 }
+
+pub fn clear_staging() {
+    if let Err(e) = fs::remove_file(Config::staging_file()) {
+        eprintln!("Couldn't delete the config staging file: {}", e);
+    }
+}
