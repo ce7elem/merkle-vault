@@ -76,15 +76,19 @@ pub fn delete_vault_local(vault_id: &String) {
     let new_vaults: Vec<String> = vaults
         .clone()
         .into_iter()
-        .filter(|v| !vaults.contains(v))
+        .filter(|v| v != vault_id)
         .collect();
 
-    let mut vaults_conf_file = OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .open(Config::staging_file())
-        .unwrap();
-    if let Err(e) = writeln!(vaults_conf_file, "{}", new_vaults.join("\n")) {
-        eprintln!("Couldn't write to staging file: {}", e);
+    if (new_vaults.is_empty()) {
+        fs::remove_file(Config::vaults_file());
+    } else {
+        let mut vaults_conf_file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(Config::vaults_file())
+            .unwrap();
+        if let Err(e) = writeln!(vaults_conf_file, "{}", new_vaults.join("\n")) {
+            eprintln!("Couldn't write to staging file: {}", e);
+        }
     }
 }
