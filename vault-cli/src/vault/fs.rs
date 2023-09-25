@@ -79,8 +79,8 @@ pub fn delete_vault_local(vault_id: &String) {
         .filter(|v| v != vault_id)
         .collect();
 
-    if (new_vaults.is_empty()) {
-        fs::remove_file(Config::vaults_file());
+    if new_vaults.is_empty() {
+        let _ = fs::remove_file(Config::vaults_file());
     } else {
         let mut vaults_conf_file = OpenOptions::new()
             .write(true)
