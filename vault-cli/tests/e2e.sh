@@ -48,5 +48,5 @@ vault-cli -s "$VAULT_ENDPOINT" download 42.txt
 
 vault-cli -s "$VAULT_ENDPOINT" --no-interaction delete $(cat $HOME/.config/vault/vaults)
 [ "$(vault-cli -s "$VAULT_ENDPOINT" list | wc -l)" = "0" ] \
-  && echo "[+] File download successful" \
+  && echo "[+] Vault deletion successful" \
   || exit 1
