@@ -1,6 +1,6 @@
 use crate::config::Config;
-use crate::vault::get_staged_files;
 use crate::vault::save_vault_root_hash;
+use crate::vault::{clear_staging, get_staged_files};
 use crate::CliConf;
 use dialoguer::Confirm;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
@@ -33,7 +33,7 @@ pub fn commit(conf: &CliConf) {
     for f in &files {
         println!("\t{}", f);
     }
-    if !(Confirm::new().with_prompt("Continue?").interact().unwrap()) {
+    if !(conf.no_interaction || Confirm::new().with_prompt("Continue?").interact().unwrap()) {
         println!("Aborting.");
         return;
     }
@@ -55,6 +55,9 @@ pub fn commit(conf: &CliConf) {
         error!("Failed to save new Vault's new root hash: {err}");
         abort_gracefully(&new_vault_id, conf);
     }
+
+    remove_files(&files);
+    clear_staging();
 }
 
 fn compute_local_root(files: &Vec<String>, conf: &CliConf) -> String {
@@ -154,7 +157,7 @@ fn create_new_vault(conf: &CliConf) -> String {
                 return vault_id;
             }
             None => {
-                error!("Something went wrong: {}", res.message);
+                error!("Error on vault creation: {}", res.message);
                 exit(-1);
             }
         }
@@ -194,4 +197,13 @@ fn abort_gracefully(collection: &String, conf: &CliConf) {
         .delete(format!("{}/{collection}", conf.api_endpoint))
         .send();
     exit(-1);
+}
+
+fn remove_files(files: &Vec<String>) {
+    for f in files.iter() {
+        if let Err(e) = fs::remove_file(f) {
+            // just print a warning
+            eprintln!("Couldn't delete `{}`", e);
+        }
+    }
 }

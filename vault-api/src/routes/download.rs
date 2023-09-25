@@ -1,8 +1,8 @@
-use crate::helpers::fs::{get_existing_vault_dir, list_files_in_vault};
+use crate::helpers::fs::list_files_in_vault;
 use rocket::fs::NamedFile;
 use rocket::serde::json::{json, Value};
 use rs_merkle_tree::{utils::crypto::hash, MerkleTree};
-use std::{fs, io, path::Path};
+use std::{fs, path::Path};
 
 #[get("/<vault_id>/<file>")]
 pub async fn download_file(vault_id: String, file: String) -> Option<NamedFile> {

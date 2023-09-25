@@ -1,0 +1,7 @@
+FROM rust:latest
+WORKDIR /app
+COPY . .
+WORKDIR /app/vault-cli
+RUN cargo install --path .
+
+CMD ["/bin/bash", "/app/vault-cli/tests/e2e.sh"]

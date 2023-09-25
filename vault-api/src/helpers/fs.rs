@@ -24,7 +24,7 @@ pub fn get_existing_vault_dir(vault_id: &String) -> Result<String, Box<dyn Error
     };
     let vault_dir = format!("./FILES/{vault_id}");
     if Path::new(&vault_dir).is_dir() {
-        Ok(vault_id.to_owned())
+        Ok(vault_dir.to_owned())
     } else {
         Err("Vault does not exists.".into())
     }

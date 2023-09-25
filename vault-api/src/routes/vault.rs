@@ -6,7 +6,7 @@ use uuid::Uuid;
 #[post("/new-vault")]
 pub fn create_vault() -> Value {
     let vault_id = Uuid::new_v4();
-    match fs::create_dir(format!("./FILES/{vault_id}")) {
+    match fs::create_dir_all(format!("./FILES/{vault_id}")) {
         Ok(_) => json!({
             "success": true,
             "message": "FS created.",

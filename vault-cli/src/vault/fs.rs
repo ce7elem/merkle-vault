@@ -1,7 +1,7 @@
 use crate::config::Config;
 use crate::utils::fs::lines_from_file;
 use std::error::Error;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::{self, Write};
 
 /// Returns a list of all vault names read from the vaults configuration file.
@@ -56,4 +56,10 @@ pub fn save_vault_root_hash(vault_id: &String, hash: &String) -> io::Result<()> 
 /// A `Vec<String>` containing the names of staged files.
 pub fn get_staged_files() -> Vec<String> {
     lines_from_file(Config::staging_file()).unwrap()
+}
+
+pub fn clear_staging() {
+    if let Err(e) = fs::remove_file(Config::staging_file()) {
+        eprintln!("Couldn't delete the config staging file: {}", e);
+    }
 }

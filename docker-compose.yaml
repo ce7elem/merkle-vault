@@ -1,0 +1,22 @@
+services:
+
+  api:
+    hostname: vault.local
+    networks:
+      - vaultnet
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+
+  client:
+      hostname: client.local
+      networks:
+        - vaultnet
+      environment:
+        VAULT_ENDPOINT: "http://vault.local:8000"
+      build:
+        context: ./
+        dockerfile: Dockerfile.client
+
+networks:
+  vaultnet:

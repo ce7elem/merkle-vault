@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 use indicatif::MultiProgress;
+use std::path::PathBuf;
 use vault_cli::CliConf;
 
 mod cmd;
@@ -17,6 +18,16 @@ use indicatif_log_bridge::LogWrapper;
 struct Cli {
     #[command(subcommand)]
     command: Commands,
+
+    /// Sets a custom config file
+    #[arg(short, long, value_name = "FILE")]
+    config: Option<PathBuf>,
+
+    #[arg(short, long, default_value = "http://vault")]
+    server: String,
+
+    #[arg(short, long, action)]
+    no_interaction: bool,
 }
 
 #[derive(Debug, Subcommand)]
@@ -48,16 +59,18 @@ fn main() {
         env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn"))
             .format_timestamp(None)
             .build();
+
+    let args = Cli::parse();
     let conf = crate::CliConf {
         term_ctx: MultiProgress::new(),
-        api_endpoint: "http:localhost:8000".into(),
+        api_endpoint: args.server,
         http: reqwest::blocking::Client::new(),
+        no_interaction: args.no_interaction,
     };
+
     LogWrapper::new(conf.term_ctx.clone(), logger)
         .try_init()
         .unwrap();
-
-    let args = Cli::parse();
 
     match args.command {
         Commands::Status {} => status(),
