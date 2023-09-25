@@ -1,7 +1,7 @@
 use crate::config::Config;
 use crate::utils::api::delete_vault;
 use crate::vault::{clear_staging, get_staged_files, save_vault_root_hash};
-use crate::CliConf;
+use crate::CliArgs;
 use dialoguer::Confirm;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
 use log::{error, info};
@@ -22,7 +22,7 @@ struct Response {
 }
 
 /// Commit the vault: Upload all staged files to the server and delete them
-pub fn commit(conf: &CliConf) {
+pub fn commit(conf: &CliArgs) {
     let files = get_staged_files();
     if files.is_empty() {
         println!("Nothing to commit. Add files to staging with the `add` command.");
@@ -60,7 +60,7 @@ pub fn commit(conf: &CliConf) {
     clear_staging();
 }
 
-fn compute_local_root(files: &Vec<String>, conf: &CliConf) -> String {
+fn compute_local_root(files: &Vec<String>, conf: &CliArgs) -> String {
     let pb = conf
         .term_ctx
         .add(ProgressBar::new(files.len().clone().try_into().unwrap()));
@@ -92,7 +92,7 @@ fn compute_local_root(files: &Vec<String>, conf: &CliConf) -> String {
     tree.root_hex().unwrap()
 }
 
-fn upload_files(files: &Vec<String>, collection: &String, conf: &CliConf) {
+fn upload_files(files: &Vec<String>, collection: &String, conf: &CliArgs) {
     let pb = conf
         .term_ctx
         .add(ProgressBar::new(files.len().clone().try_into().unwrap()));
@@ -130,7 +130,7 @@ fn upload_files(files: &Vec<String>, collection: &String, conf: &CliConf) {
     pb.finish_with_message("all files uploaded");
 }
 
-fn create_new_vault(conf: &CliConf) -> String {
+fn create_new_vault(conf: &CliArgs) -> String {
     #[derive(Deserialize, Debug)]
     #[allow(dead_code)]
     struct NewVaultResponse {
@@ -166,7 +166,7 @@ fn create_new_vault(conf: &CliConf) -> String {
     exit(-1);
 }
 
-fn finalize_upload(collection: &String, conf: &CliConf) -> String {
+fn finalize_upload(collection: &String, conf: &CliArgs) -> String {
     let remote_files = conf
         .http
         .post(format!("{}/{collection}/finalize", conf.api_endpoint))
@@ -189,7 +189,7 @@ fn finalize_upload(collection: &String, conf: &CliConf) -> String {
     }
 }
 
-fn abort_gracefully(vault_id: &String, conf: &CliConf) {
+fn abort_gracefully(vault_id: &String, conf: &CliArgs) {
     error!("Exiting gracefully...");
     error!("Resetting remote FS.");
     delete_vault(vault_id, conf);

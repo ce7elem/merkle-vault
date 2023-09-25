@@ -5,7 +5,7 @@ pub mod config;
 pub mod utils;
 pub mod vault;
 
-pub struct CliConf {
+pub struct CliArgs {
     pub term_ctx: MultiProgress,
     pub api_endpoint: String,
     pub http: reqwest::blocking::Client,

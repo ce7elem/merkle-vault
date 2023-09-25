@@ -1,12 +1,12 @@
 use crate::utils::api::delete_vault;
 use crate::vault::delete_vault_local;
 use crate::vault::get_all_vaults;
-use crate::CliConf;
+use crate::CliArgs;
 use dialoguer::Confirm;
 use std::process::exit;
 
 /// Delete remote vault
-pub fn delete(vault_id: &String, conf: &CliConf) {
+pub fn delete(vault_id: &String, conf: &CliArgs) {
     if get_all_vaults()
         .into_iter()
         .find(|v| v == vault_id)
