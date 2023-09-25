@@ -102,6 +102,14 @@ need to specify it with `--server`.
 
 ## Design
 
+### rs-merkle-tree Librairy
+
+Since both the client and the server are to compute/use merkle-tree functions,
+the functionalities are bundled in a proper librairy:
+[rs-merkle=tree](./rs-merkle-tree/).
+
+Usages should be well-enough descibed in the unit tests.
+
 ### CLI
 
 The workflow is similar to `git`.
@@ -191,6 +199,20 @@ The exposed routes are:
 - `DELETE /<vault_id>`: Removes the associated folder.
 - `GET /<vault_id>/<filename>`: Download file from the vault.
 - `GET /<vault_id>/<filename>/proof`: Returns the merkle proof for the file.
+
+### Note on testing
+
+The `rs-merkle-tree` is unit-tested, but the cli and the api are only end-to-end
+tested.
+
+[CI scripts](./.github/workflows/) are checking for code format and building for
+each projects. Unit tests are run for the librairy as well as the docker-based
+end-to-end tests for the cli and the server.
+
+The end-to-end tests consist in spawning two docker images: the running server
+and a client machine with the cli installed. The client will run
+[a script](./vault-cli/tests/e2e.sh) that will run each commands and check for
+expected outputs and filesystem evolution.
 
 ## Next Steps
 
