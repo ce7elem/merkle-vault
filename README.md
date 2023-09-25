@@ -57,8 +57,9 @@ transportation.
 
 ## Features ideas
 
-- [ ] Option to encrypt files before vaulting them
+- [ ] Bulk file upload/download
 - [ ] Authentication
 - [ ] Named Vault
+- [ ] Option to encrypt files before vaulting them
 - [ ] "Writable" Vault (keep all files hash? download the whole vault > add file
       > commit it?)
