@@ -1,10 +1,14 @@
-# Vault
+# Merkle Vault
 
 ## Abstact
 
 This software allows the user the store files on a remote server and download
 them later. Checks are systematically performed on the files to ensure their
 integrity.
+
+Under the hood, the project use Merkle trees for the integrity checks:
+The client gets to store only one hash when uploading _n_ files. This
+only hash is enough to assert the integrity of the all the files.
 
 The software consists in two parts:
 
