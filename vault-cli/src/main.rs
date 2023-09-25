@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use indicatif::MultiProgress;
 use std::path::PathBuf;
-use vault_cli::CliConf;
+use vault_cli::CliArgs;
 
 mod cmd;
 mod config;
@@ -23,10 +23,12 @@ struct Cli {
     #[arg(short, long, value_name = "FILE")]
     config: Option<PathBuf>,
 
+    /// Auto accept confirmation dialogs
     #[arg(short, long, default_value = "http://vault.local:8000")]
     server: String,
 
-    #[arg(short, long, action)]
+    /// Auto accept confirmation dialogs
+    #[arg(short = 'y', long, action)]
     no_interaction: bool,
 }
 
@@ -35,10 +37,10 @@ enum Commands {
     /// List staged files to be commited to the vault
     Status {},
 
-    /// Add file to the staging area
+    /// Add file/directory content to the staging area
     Add { path: String },
 
-    /// Remove file from the staging area
+    /// Remove file/directory content from the staging area
     Remove { path: String },
 
     /// Remove all file from the staging area
@@ -50,8 +52,14 @@ enum Commands {
     /// List all files from all vaults
     List {},
 
-    /// Download file from any vault
-    Download { file: String },
+    /// Download a file from any vault.
+    Download {
+        file: String,
+
+        /// Specify vault id (needed on duplicates between vaults)
+        #[arg(short, long)]
+        vault_id: Option<String>,
+    },
 
     /// Delete a given vault
     Delete { vault_id: String },
@@ -64,7 +72,7 @@ fn main() {
             .build();
 
     let args = Cli::parse();
-    let conf = crate::CliConf {
+    let conf = crate::CliArgs {
         term_ctx: MultiProgress::new(),
         api_endpoint: args.server,
         http: reqwest::blocking::Client::new(),
@@ -82,7 +90,7 @@ fn main() {
         Commands::Clear {} => clear(),
         Commands::Commit {} => commit(&conf),
         Commands::List {} => list(&conf),
-        Commands::Download { file } => download(&file, &conf),
+        Commands::Download { file, vault_id } => download(&file, vault_id, &conf),
         Commands::Delete { vault_id } => delete(&vault_id, &conf),
     }
 }

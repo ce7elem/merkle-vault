@@ -1,4 +1,4 @@
-use crate::CliConf;
+use crate::CliArgs;
 use log::error;
 use rs_merkle_tree::MerkleProof;
 use serde::Deserialize;
@@ -24,7 +24,7 @@ struct ListFilesResponse {
 /// # Returns
 ///
 /// A vector of strings representing the list of files in the vault.
-pub fn fetch_files_in_vault(vault_id: &String, conf: &CliConf) -> Vec<String> {
+pub fn fetch_files_in_vault(vault_id: &String, conf: &CliArgs) -> Vec<String> {
     let res = conf
         .http
         .get(format!("{}/{vault_id}/list-files", conf.api_endpoint))
@@ -59,7 +59,7 @@ pub fn fetch_files_in_vault(vault_id: &String, conf: &CliConf) -> Vec<String> {
 pub fn download_file(
     vault_id: &String,
     filename: &String,
-    conf: &CliConf,
+    conf: &CliArgs,
 ) -> Result<(), Box<dyn Error>> {
     let res = conf
         .http
@@ -95,7 +95,7 @@ struct ProofResponse {
 pub fn fetch_proof_for_file(
     vault_id: &String,
     filename: &String,
-    conf: &CliConf,
+    conf: &CliArgs,
 ) -> Result<MerkleProof, Box<dyn Error>> {
     let res = conf
         .http
@@ -116,7 +116,7 @@ pub fn fetch_proof_for_file(
     }
 }
 
-pub fn delete_vault(vault_id: &String, conf: &CliConf) {
+pub fn delete_vault(vault_id: &String, conf: &CliArgs) {
     let _ = conf
         .http
         .delete(format!("{}/{vault_id}", conf.api_endpoint))

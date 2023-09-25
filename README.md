@@ -116,8 +116,9 @@ vaulted files is saved in your local config files (typically
 `~/.config/vault/vaults`) to ensure the integrity of your files.
 
 You can then use the `vault-cli list` to list all your vaulted files, and the
-`vault-cli download` command can be used to download them again. When a file is
-downloaded from the remote server, an integrity check is performed:
+`vault-cli download [--vault-id <VAULT>] <FILE>` command can be used to download
+them again. When a file is downloaded from the remote server, an integrity check
+is performed:
 
 - the file and its Merkle Proof are downloaded
 - the Merkle tree root's hash is retrieved from the proof
@@ -132,23 +133,44 @@ permanently deleted.
 
 #### CLI Commands Blueprints
 
-##### `vault-cli add`
+##### `vault-cli add <FILE>|<DIRECTORY>`
+
+Stage file or files in a directory.
 
 ![command: add](./.assets/add.png)
 
+##### `vault-cli remove <FILE>|<DIRECTORY>`
+
+Unstage file or files in a directory.
+
 ##### `vault-cli status`
+
+Show staged files.
 
 ![command: status](./.assets/status.png)
 
 ##### `vault-cli commit`
 
+Creates a vault, upload staged files into it, genreate merkle tree and store the
+root hash in `~/.config/vault/<vault_id>.hash`, and remove the local files. The
+vault id is append in `~/.config/vault/vaults`.
+
 ![command: commit](./.assets/commit.png)
 
 ##### `vault-cli list`
 
+Lists all the files amongs user's vaults (User vaults ids are stored in
+`~/.config/vault/vaults`).
+
 ![command: list](./.assets/list.png)
 
-##### `vault-cli download`
+##### `vault-cli download [--vault-id <VAULT>] <FILE>`
+
+Downloads a file from any vault.
+
+If `--vault-id` is not specifed `download` will search for the filename in all
+the vaults. On duplicates filename amongst multiple vaults, it will be needed to
+specify it.
 
 ![command: download](./.assets/download.png)
 
@@ -172,11 +194,12 @@ The exposed routes are:
 
 ## Next Steps
 
-- [ ] Bulk file upload/download
 - [ ] Authentication
+- [ ] Bulk file upload/download
 - [ ] Named Vault / user-frienly vault name
 - [ ] Proper config file (persist server endpoint, ...)
 - [ ] Option to encrypt files before vaulting them
 - [ ] "Writable" Vault (keep all files hash? download the whole vault > add file
       > commit it?)
 - [ ] CLI Autocompletion
+- [ ] add/remove/download multiple files (directory supported)

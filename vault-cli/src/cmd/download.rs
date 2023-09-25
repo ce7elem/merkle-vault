@@ -1,13 +1,14 @@
 use crate::utils::api::{download_file, fetch_files_in_vault, fetch_proof_for_file};
 use crate::vault::{get_all_vaults, get_root_hash_for_vault};
-use crate::CliConf;
+use crate::CliArgs;
 use log::info;
 use std::path::Path;
 use std::process::exit;
+use std::vec;
 
 /// Download file from any Vault
-pub fn download(filename: &String, conf: &CliConf) {
-    let files_uri = retrieve_remote_matching_files(filename, conf);
+pub fn download(filename: &String, vault: Option<String>, conf: &CliArgs) {
+    let files_uri = retrieve_remote_matching_files(filename, vault, conf);
 
     if files_uri.len() == 0 {
         eprintln!("File {filename} not found in the remote vaults");
@@ -44,17 +45,33 @@ pub fn download(filename: &String, conf: &CliConf) {
     info!("'{filename}' downloaded successfully.");
 }
 
-fn retrieve_remote_matching_files(filename: &String, conf: &CliConf) -> Vec<(String, String)> {
-    let mut matches = Vec::<(String, String)>::new();
-
-    for vault_id in get_all_vaults() {
-        info!("Searching in vault {vault_id}");
-        if let Some(uri) = fetch_files_in_vault(&vault_id, conf).iter().find(|f| {
-            info!("\t- {f}");
-            Path::new(f).file_name().unwrap().to_str() == Some(filename)
-        }) {
-            matches.push((vault_id.clone(), uri.clone()));
+fn retrieve_remote_matching_files(
+    filename: &String,
+    vault: Option<String>,
+    conf: &CliArgs,
+) -> Vec<(String, String)> {
+    match vault {
+        Some(vault_id) => {
+            if let Some(uri) = fetch_files_in_vault(&vault_id, conf).iter().find(|f| {
+                info!("\t- {f}");
+                Path::new(f).file_name().unwrap().to_str() == Some(filename)
+            }) {
+                return vec![(vault_id, uri.clone())];
+            }
+            return Vec::<(String, String)>::new();
+        }
+        None => {
+            let mut matches = Vec::<(String, String)>::new();
+            for vault_id in get_all_vaults() {
+                info!("Searching in vault {vault_id}");
+                if let Some(uri) = fetch_files_in_vault(&vault_id, conf).iter().find(|f| {
+                    info!("\t- {f}");
+                    Path::new(f).file_name().unwrap().to_str() == Some(filename)
+                }) {
+                    matches.push((vault_id.clone(), uri.clone()));
+                }
+            }
+            return matches;
         }
     }
-    return matches;
 }
