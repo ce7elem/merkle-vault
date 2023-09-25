@@ -1,9 +1,9 @@
 use crate::config::Config;
 use crate::utils::fs::lines_from_file;
 use std::error::Error;
+use std::fs::OpenOptions;
 use std::fs::{self, File};
 use std::io::{self, Write};
-use std::fs::OpenOptions;
 
 /// Returns a list of all vault names read from the vaults configuration file.
 ///
@@ -88,4 +88,3 @@ pub fn delete_vault_local(vault_id: &String) {
         eprintln!("Couldn't write to staging file: {}", e);
     }
 }
-
