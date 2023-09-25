@@ -23,7 +23,7 @@ struct Cli {
     #[arg(short, long, value_name = "FILE")]
     config: Option<PathBuf>,
 
-    #[arg(short, long, default_value = "http://vault")]
+    #[arg(short, long, default_value = "http://vault.local:8000")]
     server: String,
 
     #[arg(short, long, action)]
