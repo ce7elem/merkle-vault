@@ -1,7 +1,7 @@
 use crate::config::Config;
 use crate::utils::fs::lines_from_file;
 use std::error::Error;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::{self, Write};
 
 /// Returns a list of all vault names read from the vaults configuration file.

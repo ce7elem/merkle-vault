@@ -1,6 +1,6 @@
 use crate::config::Config;
-use crate::vault::{get_staged_files, clear_staging};
 use crate::vault::save_vault_root_hash;
+use crate::vault::{clear_staging, get_staged_files};
 use crate::CliConf;
 use dialoguer::Confirm;
 use indicatif::{ProgressBar, ProgressState, ProgressStyle};
